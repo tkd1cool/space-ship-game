@@ -22,10 +22,10 @@ public class MapGenerator : MonoBehaviour
 
         Map = new GameObject("Map");
 
-        generateLevel();
+        GenerateLevel();
     }
 
-    private void generateLevel()
+    private void GenerateLevel()
     {
         mapColorResized = Instantiate(mapColor);
         TextureScale.Bilinear(mapColorResized, map.width * 2, map.height * 2);
@@ -33,12 +33,12 @@ public class MapGenerator : MonoBehaviour
         {
             for (int y = 0; y < map.height; y++)
             {
-                generateTile(x, y);
+                GenerateTile(x, y);
             }
         }
     }
 
-    private void generateTile(int x, int y)
+    private void GenerateTile(int x, int y)
     {
         Color color = map.GetPixel(x, y);
         if (color.a == 0)

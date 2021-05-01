@@ -49,6 +49,7 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -100,7 +101,7 @@ MonoBehaviour:
   bigBulletHitEffect: {fileID: 2127202588041213033, guid: 7555ad972f5bf431d8cd4842f5e4fdab,
     type: 3}
   health: 5
-  explosionRadius: 0.5
+  explosionRadius: 0.3
 --- !u!61 &4937342260441190707
 BoxCollider2D:
   m_ObjectHideFlags: 0

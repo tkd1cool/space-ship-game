@@ -169,8 +169,8 @@ InputManager:
     m_Name: Player3Turn
     descriptiveName: 
     descriptiveNegativeName: 
-    negativeButton: v
-    positiveButton: m
+    negativeButton: j
+    positiveButton: l
     altNegativeButton: 
     altPositiveButton: joystick button 1
     gravity: 1000
@@ -186,7 +186,7 @@ InputManager:
     descriptiveName: 
     descriptiveNegativeName: 
     negativeButton: 
-    positiveButton: h
+    positiveButton: i
     altNegativeButton: 
     altPositiveButton: joystick button 1
     gravity: 1000
@@ -201,8 +201,8 @@ InputManager:
     m_Name: Player4Turn
     descriptiveName: 
     descriptiveNegativeName: 
-    negativeButton: ''''
-    positiveButton: ']'
+    negativeButton: 1
+    positiveButton: 3
     altNegativeButton: 
     altPositiveButton: joystick button 1
     gravity: 1000
@@ -218,7 +218,7 @@ InputManager:
     descriptiveName: 
     descriptiveNegativeName: 
     negativeButton: 
-    positiveButton: '['
+    positiveButton: 5
     altNegativeButton: 
     altPositiveButton: joystick button 1
     gravity: 1000

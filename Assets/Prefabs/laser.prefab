@@ -47,6 +47,7 @@ LineRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -144,3 +145,5 @@ MonoBehaviour:
   player: {fileID: 0}
   lr: {fileID: 5183440238350105337}
   layerMask: 0
+  laserHitEffect: {fileID: 2127202588041213033, guid: df6b37808d24942bd8790fcc695b5dff,
+    type: 3}

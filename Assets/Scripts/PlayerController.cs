@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System;
+﻿using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +7,8 @@ public class PlayerController : MonoBehaviour
     public float thrustForce = 100f;
     public float turnSpeed = 100f;
     public float timeBetweenBullets = 1f;
+    public float timeBetweenBigBullets = 2f;
+    public float timeBetweenMiniBullets = 0.75f;
     public float recoilForce = 10f;
     public float bulletSpread = 30f;
     public int maxHealth;
@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     public Rigidbody2D rb;
     public GameObject bullet;
     public GameObject bigBullet;
+    public GameObject miniBullet;
     public GameObject homingBullet;
     public GameObject LaserPrefab;
     public GameObject playerDeathEffect;
@@ -41,13 +42,13 @@ public class PlayerController : MonoBehaviour
         string temp = playerName.Replace("Player", "");
         playerNumber = Convert.ToInt32(temp);
         gameObject.layer = playerNumber + 7;
-        InvokeRepeating("CreateBullet", 1, timeBetweenBullets);
+        InvokeRepeating(nameof(CreateBullet), 1, timeBetweenBullets);
         healthUI = FindObjectOfType<Canvas>().transform.GetChild(0).GetChild(playerNumber).gameObject;
         healthUI.SetActive(true);
         healthText = healthUI.transform.GetChild(2).gameObject.GetComponent<Text>();
         healthBar = healthUI.transform.GetChild(0).GetChild(1).transform;
         deathText = healthUI.transform.GetChild(3).gameObject;
-        var playerSprite = Resources.Load<Sprite>("Players/"+playerName);
+        var playerSprite = Resources.Load<Sprite>("Players/" + playerName);
         GetComponent<SpriteRenderer>().sprite = playerSprite;
     }
 
@@ -72,10 +73,19 @@ public class PlayerController : MonoBehaviour
         //recoil
         rb.AddForce(-transform.up * recoilForce * 2);
     }
+    private void CreateMiniBullet()
+    {
+        //create and setup bullet
+        GameObject instantiatedBullet;
+        instantiatedBullet = Instantiate(miniBullet, transform.position, transform.rotation);
+        instantiatedBullet.GetComponent<MiniBullet>().Setup(playerNumber, rb.velocity, transform.up);
+        //recoil
+        rb.AddForce(-transform.up * recoilForce*0.5f);
+    }
     private void CreateLaser()
     {
         laser = Instantiate(LaserPrefab);
-        laser.GetComponent<Laser>().Setup(playerNumber + 7, transform);
+        laser.GetComponent<Laser>().Setup(playerNumber + 7, transform, playerNumber);
         laser.tag = playerName + "Laser";
     }
     private void CreateBullet()
@@ -125,18 +135,18 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.collider.CompareTag("BigBullet"))
         {
-            take2Damage();
+            Take2Damage();
         }
 
         if (!collision.collider.CompareTag("Bullet"))
         {
             return;
         }
-        
-        takeDamage();
-        
+
+        TakeDamage();
+
     }
-    public void takeDamage()
+    public void TakeDamage()
     {
         health--;
         healthText.text = health.ToString() + "/" + maxHealth.ToString();
@@ -149,9 +159,9 @@ public class PlayerController : MonoBehaviour
         OnDeath();
         return;
     }
-    public void take2Damage()
+    public void Take2Damage()
     {
-        health = health - 2;
+        health -= 2;
         healthText.text = health.ToString() + "/" + maxHealth.ToString();
         healthBar.localScale = new Vector3((float)health / maxHealth, 1f, 1f);
         if (health > 0 || dead)
@@ -160,7 +170,6 @@ public class PlayerController : MonoBehaviour
         }
         dead = true;
         OnDeath();
-        return;
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -169,7 +178,7 @@ public class PlayerController : MonoBehaviour
         Destroy(collision.gameObject);
     }
 
-    public void setMaxHealth(int maxHealth)
+    public void SetMaxHealth(int maxHealth)
     {
         this.maxHealth = maxHealth;
         health = maxHealth;
@@ -182,14 +191,14 @@ public class PlayerController : MonoBehaviour
         if (mode == 1)
         {
             Destroy(GameObject.FindWithTag(playerName + "Laser"));
-            InvokeRepeating("CreateHomingBullet", 1, timeBetweenBullets);
-            Invoke("EndPowerUp", 15);
+            InvokeRepeating(nameof(CreateHomingBullet), 1, timeBetweenBullets);
+            Invoke(nameof(EndPowerUp), 15);
         }
         if (mode == 2)
         {
             Destroy(GameObject.FindWithTag(playerName + "Laser"));
-            InvokeRepeating("CreateTripleShot", 1, timeBetweenBullets);
-            Invoke("EndPowerUp", 15);
+            InvokeRepeating(nameof(CreateTripleShot), 1, timeBetweenBullets);
+            Invoke(nameof(EndPowerUp), 15);
         }
         if (mode == 3)
         {
@@ -197,13 +206,19 @@ public class PlayerController : MonoBehaviour
             {
                 CreateLaser();
             }
-            Invoke("EndPowerUp", 15);
+            Invoke(nameof(EndPowerUp), 15);
         }
-        if(mode==4)
+        if (mode == 4)
         {
             Destroy(GameObject.FindWithTag(playerName + "Laser"));
-            InvokeRepeating("CreateBigBullet", 0.6f, timeBetweenBullets);
-            Invoke("EndPowerUp", 15);
+            InvokeRepeating(nameof(CreateBigBullet), 1, timeBetweenBigBullets);
+            Invoke(nameof(EndPowerUp), 15);
+        }
+        if (mode == 5)
+        {
+            Destroy(GameObject.FindWithTag(playerName + "Laser"));
+            InvokeRepeating(nameof(CreateMiniBullet), 1, timeBetweenMiniBullets);
+            Invoke(nameof(EndPowerUp), 15);
         }
     }
 
@@ -211,11 +226,12 @@ public class PlayerController : MonoBehaviour
     {
         CancelInvoke();
         Destroy(GameObject.FindWithTag(playerName + "Laser"));
-        InvokeRepeating("CreateBullet", 1, timeBetweenBullets);
+        InvokeRepeating(nameof(CreateBullet), 1, timeBetweenBullets);
     }
 
     void OnDeath()
     {
+        Destroy(GameObject.FindWithTag(playerName + "Laser"));
         GameObject effect = Instantiate(playerDeathEffect, transform.position, Quaternion.identity);
         var main = effect.GetComponent<ParticleSystem>().main;
         main.startColor = PlayerInfo.GetColor(playerNumber);

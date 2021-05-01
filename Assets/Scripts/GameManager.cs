@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
         var players = GameObject.FindGameObjectsWithTag("Player");
         for (int i = 0; i < players.Length; i++)
         {
-            players[i].GetComponent<PlayerController>().setMaxHealth(maxPlayerHealth);
+            players[i].GetComponent<PlayerController>().SetMaxHealth(maxPlayerHealth);
         }
         Camera cam = Camera.main;
         EdgeCollider2D poop = cam.transform.GetChild(0).gameObject.GetComponent<EdgeCollider2D>();
@@ -40,7 +40,11 @@ public class GameManager : MonoBehaviour
             while (Physics.CheckBox(spawn, new Vector3(1, 1, 1)) && counter < 1000);
             GameObject PowerUp = Instantiate(powerUp, spawn, Quaternion.identity);
             secondsSinceLastPowerup = 0;
-            PowerUp.GetComponent<PowerUp>().randomize();
+            PowerUp.GetComponent<PowerUp>().Randomize();
         }
+    }
+    public void EndGame()
+    {
+
     }
 }

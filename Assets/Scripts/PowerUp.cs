@@ -6,8 +6,8 @@ public class PowerUp : MonoBehaviour
 {
     public SpriteRenderer sr;
     public int powerUp;
-    int numberOfPowerUps = 5;
-    public void randomize()
+    readonly int numberOfPowerUps = 5;
+    public void Randomize()
     {
         powerUp = Random.Range(1, numberOfPowerUps + 1);
         //homingBullets = 1

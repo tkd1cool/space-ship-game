@@ -11,22 +11,20 @@ public class Laser : MonoBehaviour
 
     GameObject hitObject;
     float timeHitObject;
-    float timeToDamage = 0.5f;
+    readonly float timeToDamage = 0.5f;
 
     RaycastHit2D ray;
+    public GameObject laserHitEffect;
+    GameObject hitEffect;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    public void Setup(int playerLayer, Transform player)
+    public void Setup(int playerLayer, Transform player, int playerNumber)
     {
         this.player = player;
 
-        List<string> layersList = new List<string>(5);
-        layersList.Add("Default");
+        List<string> layersList = new List<string>(5)
+        {
+            "Default"
+        };
         for (int i = 1; i <= 4; i++)
         {
             string stringToAdd = "Player" + i.ToString();
@@ -37,15 +35,28 @@ public class Laser : MonoBehaviour
         }
         layerMask = LayerMask.GetMask(layersList.ToArray());
         //layerMask = 1;
+        hitEffect = Instantiate(laserHitEffect);
+        Color c = PlayerInfo.GetColor(playerNumber);
+        var main = hitEffect.GetComponent<ParticleSystem>().main;
+        main.startColor=c;
+        var trails = hitEffect.GetComponent<ParticleSystem>().trails;
+        trails.colorOverLifetime = c;
+        trails.colorOverTrail = c;
+        lr.startColor = c;
+        lr.endColor = c;
+
     }
 
     // Update is called once per frame
     void Update()
     {
 
-        lr.SetPosition(0, player.position);
-
+        lr.SetPosition(0, Vector2.MoveTowards(player.position,ray.point,0.22f));
         lr.SetPosition(1, ray.point);
+        Quaternion rot = Quaternion.LookRotation(ray.normal, Vector3.up);
+        hitEffect.transform.rotation = rot;
+        hitEffect.transform.position = ray.point;
+        
     }
     private void FixedUpdate()
     {
@@ -77,9 +88,13 @@ public class Laser : MonoBehaviour
     {
         if(hitObject.CompareTag("Player"))
         {
-            hitObject.GetComponent<PlayerController>().takeDamage();
+            hitObject.GetComponent<PlayerController>().TakeDamage();
             return;
         }
         Destroy(hitObject);
+    }
+    private void OnDestroy()
+    {
+        Destroy(hitEffect);
     }
 }
